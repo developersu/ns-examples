@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <dirent.h>
-#include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdlib.h>
 
-#include <unistd.h> // rmdir()
+#include <unistd.h> // rmdir(), unlink()
 #include <errno.h>  // DEBUG
 
 // Create file
@@ -24,15 +24,14 @@ void lsDir(const char* dir_name){
 
     dir = opendir(dir_name);//Open current-working-directory.
     if (dir == NULL) {
-        printf("Failed to open dir.\n");
+        printf("Failed to open dir: %s\n", dir_name);
     }
     else {
-        printf("Dir-listing for '':\n");
+        printf("ls %s\n", dir_name);
 
         while ((ent = readdir(dir))) 
             printf("d_name: %s d_type: %u\n", ent->d_name, (unsigned) ent->d_type);
         closedir(dir);
-        printf("Done.\n");
     }
 }
 
@@ -49,12 +48,12 @@ int removeAll(const char* dir_name){
     int retVal;
 
     if (! isDir(dir_name))
-        return remove(dir_name);
+        return unlink(dir_name);
 
     printf("This is dir\n");
 
-    DIR *dir;
-    dir = opendir(dir_name);
+    DIR *dir = opendir(dir_name);
+
     if (dir == NULL)
         return 1;
 
@@ -62,7 +61,6 @@ int removeAll(const char* dir_name){
     
     size_t dSz = strlen(dir_name);
     struct dirent *s_dirent;
-
     char* full_name;
 
     while ((s_dirent = readdir(dir)) != NULL){
@@ -77,7 +75,7 @@ int removeAll(const char* dir_name){
         if (s_dirent->d_type == DT_DIR)
             removeAll(full_name);
         else{
-            retVal = remove(full_name);      // NOTE: Add validation
+            retVal = unlink(full_name);      // NOTE: Add validation
             printf("I: %s - %i - %s\n", full_name, retVal, strerror(errno)); // DEBUG
         }
 
