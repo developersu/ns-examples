@@ -3,7 +3,6 @@
 name: CI
 
 on:
-
   push:
     branches: [ master ]
   pull_request:
@@ -12,9 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  
   build:
-  
     runs-on: ubuntu-latest
     container: devkitpro/devkita64:latest
   
@@ -24,7 +21,7 @@ jobs:
         uses: oprypin/find-latest-tag@v1
         with:
           repository: switchbrew/libnx
-          release-only: true
+          releases-only: true
         id: libnxtag
 
       - name: Get latest libnx
@@ -41,5 +38,5 @@ jobs:
           
       - uses: actions/upload-artifact@v2
         with:
-          name: debug
-          path: ./*.nro
+          name: build-libnx-${{ steps.libnxtag.outputs.tag }}
+          path: ./*.nro ./*.NRO
