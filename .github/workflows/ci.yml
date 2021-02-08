@@ -39,4 +39,4 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: build-libnx-${{ steps.libnxtag.outputs.tag }}
-          path: ./*.nro ./*.NRO
+          path: ./*.nro
