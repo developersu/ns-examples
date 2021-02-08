@@ -20,16 +20,18 @@ jobs:
   
     steps:
 
-      - name: Get latest libnx release
-        working-directory: nx
-        run: |
-          git clone https://github.com/switchbrew/libnx.git
-          cd ./libnx
-          git fetch --tags
-          git checkout $(git describe --tags $(git rev-list --tags --max-count=1))
-          
-      - name: Install libnx
-        run: make install
+      - name: Find latest libnx release tag
+        uses: oprypin/find-latest-tag@v1
+        with:
+          repository: switchbrew/libnx
+          release-only: true
+        id: libnxtag
+
+      - name: Get latest libnx
+        uses: actions/checkout@v2
+        with:
+          repository: switchbrew/libnx
+          ref: ${{ steps.libnxtag.outputs.tag }}
     
       # Checks-out your repository
       - uses: actions/checkout@v2
